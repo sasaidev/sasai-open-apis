@@ -11,11 +11,7 @@ It comes with lots of bug fixes, optimizations and support for SasaiPay SDKs.
 This repository contains examples and best practices for integrating with Sasai, provided as Jupyter notebooks.
 
 - [Sasai Authourisation](examples/01_prepare_data): Third party web applications, accessed via Sasai's built-in browser can obtain the basic information of the user through the SaSai webpage’s authorization mechanism below
-- [SasaiPay](examples/00_quick_start): Sasai pay allows a third-party merchant to process payments using the Sasai Wallet.
-
-Several utilities are provided in [reco_utils](reco_utils) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications. See the [reco_utils documentation](https://readthedocs.org/projects/microsoft-recommenders/).
-
-For a more detailed overview of the repository, please see the documents on the [wiki page](https://github.com/microsoft/recommenders/wiki/Documents-and-Presentations).
+- [SasaiPay](examples/00_quick_start): Sasai pay allows a third-party merchant to process payments using the Sasai Wallet.  
 
 ## Getting Started
 
