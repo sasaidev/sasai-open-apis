@@ -10,18 +10,50 @@ It comes with lots of bug fixes, optimizations and support for SasaiPay SDKs.
 
 This repository contains examples and best practices for integrating with Sasai, provided as Jupyter notebooks.
 
-- [Sasai Authourisation](examples/01_prepare_data): Third party web applications, accessed via Sasai's built-in browser can obtain the basic information of the user through the SaSai webpage’s authorization mechanism below
-- [SasaiPay](examples/00_quick_start): Sasai pay allows a third-party merchant to process payments using the Sasai Wallet.  
+- [Sasai Authorisation](examples/01_prepare_data): authorise and obtain user's basic information 
+- [SasaiPay](examples/00_quick_start): process payments using the Sasai Wallet.  
 
-## Getting Started
+## 1. Authorisation
 
-Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
+This is a three step process.
 
-To setup on your local machine:
+### 1.1 Get Authorisation Code
 
-1. Install Anaconda with Python >= 3.6. [Miniconda](https://conda.io/miniconda.html) is a quick way to get started.
+Add the javascript below on your web page to get the authorisation code
 
-2. Clone the repository
+```bash
+function authenticateWithSasai() {
+    var jsonData = '{"type":"800", "appId": "ownai_client", "scope": "user_info"}';
+    window.SasaiCall.openAuth(jsonData);  //for android
+    window.webkit.messageHandlers.currentCookies.postMessage(jsonData); // for iOS
+}
+ 
+function returnAuth(callbackData) {
+    var data = JSON.parse(callbackData);
+    alert(data);
+}
+```
+
+**NOTE** 
+- The **appId** and **scope** will be provided. The test values are **"client"** and **"user_info"** respectively.
+- The cookie **phoneNumber** contains the Sasai registered phone number.
+
+##### callBackData object structure
+
+```bash
+{
+    "ret": "0",
+    "code": "XYTHSG",
+    "scope": "user_info"
+}
+```
+| Field | Description |
+| --- | --- |
+| ret | "0" = Sucess, "-1" = Failed |
+| code | Authorisation code to be used in successive get toke operations |
+| scope | Default is **user_info** |
+
+### 1.2 Get Authorisation Code
 
 ```bash
 git clone https://github.com/Microsoft/Recommenders
