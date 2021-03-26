@@ -10,8 +10,8 @@ It comes with lots of bug fixes, optimizations and support for SasaiPay SDKs.
 
 This repository contains examples and best practices for integrating with Sasai, provided as Jupyter notebooks.
 
-- [Sasai Authorisation](examples/01_prepare_data): authorise and obtain user's basic information 
-- [SasaiPay](examples/00_quick_start): process payments using the Sasai Wallet.  
+- [Sasai Authorisation](#): authorise and obtain user's basic information 
+- [SasaiPay](#): process payments using the Sasai Wallet.  
 
 ## 1. Authorisation
 
@@ -53,40 +53,94 @@ function returnAuth(callbackData) {
 | code | Authorisation code to be used in successive get toke operations |
 | scope | Default is **user_info** |
 
-### 1.2 Get Authorisation Code
+### 1.2 Get Access Token
+
+Use the code returned in the callBackData above, to obtain an access_token
 
 ```bash
-git clone https://github.com/Microsoft/Recommenders
+curl --request POST \
+  --url 'http://opentest.im.sasai.mobi/authorize/oauth2/access_token?code=2I73DV&amp;secret=dc1s9dullflmh2et&amp;appId=client'
 ```
 
-3. Run the generate conda file script to create a conda environment: (This is for a basic python environment, see [SETUP.md](SETUP.md) for PySpark and GPU environment setup)
+| Field |  |
+| --- | --- |
+| appId | Will be provided |
+| secret | Will be provided |
+| code | The code returned from the GET AUTHORISATION CODE step above |
+
+Response
 
 ```bash
-cd Recommenders
-python tools/generate_conda_file.py
-conda env create -f reco_base.yaml  
+{
+    "code": 200,
+    "data": {
+        "openid": "10000058024",
+        "scope": "user_info",
+        "access_token": "TOKEN",
+        "expires_in": 7200,
+        "refresh_token": "REFRESH_TOKEN"
+    },
+    "codeMsg": "Success"
+} 
 ```
-
-4. Activate the conda environment and register it with Jupyter:
+### 1.3 Get User Information
 
 ```bash
-conda activate reco_base
-python -m ipykernel install --user --name reco_base --display-name "Python (reco)"
+{
+    "code": 200,
+    "data": {
+        "userId": 0,
+        "userNumber": null,
+        "password": null,
+        "mobile": null,
+        "mobileCode": 0,
+        "codeMobile": null,
+        "image": 0,
+        "qrCode": null,
+        "autograph": null,
+        "gender": 0,
+        "region": null,
+        "nickName": null,
+        "regApp": 0,
+        "email": null,
+        "walletStatus": 0,
+        "emailState": 0,
+        "state": 0,
+        "createTime": 0,
+        "updateTime": 0
+    },
+    "codeMsg": "Success"
+}
 ```
 
-5. Start the Jupyter notebook server
+#### 1.3.1 Get Authorisation Code
 
 ```bash
-jupyter notebook
+curl --request POST \
+  --url https://opentest.im.sasai.mobi:41880/authorize/oauth2/authorize \
+  --header 'content-type: application/json' \
+  --header 'h_open_uid: 10000058024' \
+  --data '{
+    "param": "28JzERz1XbAmXaV1PZ1QZVtdK0DPAO/jtsEjWlC6V5fd4bcL7rxWhXhAE4KZXO4cGgG/H/1CbDpelOM7NLgfQNUswEt8wRJoTK0XMoRhYx/iRuYIjxZ+fzw2YIECLhfsIcv8ZBnppjBBapjq8j9DBnKvpd8dB0CzV1MEKwLeLKE=",
+    "sign": "92567293b278a8e5e387250edf692003"
+}'
 ```
+| Field |  |
+| --- | --- |
+| openId | The *openId* from 1.3 above |
+| param | AES encrypted concatenated string: scope + responseType + appId + authToken + userId |
+| sign | AES encrypted concatenated string: scope + responseType + appId + authToken + userId + securityOffset |
+| scope | user_info |
+| responseType | code |
+| securityOffset | 2605222301669449 |
 
-6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
-
-**NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine.
-
-## Related projects
-
-- [Microsoft AI Github](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository.
-- [NLP best practices](https://github.com/microsoft/nlp-recipes): Best practices and examples on NLP.
-- [Computer vision best practices](https://github.com/microsoft/computervision-recipes): Best practices and examples on computer vision.
-- [Forecasting best practices](https://github.com/microsoft/forecasting): Best practices and examples on time series forecasting.
+```bash
+{
+  "code": 200,
+  "data": {
+    "code": "ECB8YE",
+    "state": null
+  },
+  "codeMsg": "Success"
+}
+```
